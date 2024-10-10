@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: 1
+  ignore_errors: yes
+  tasks:
+    
+    - name: create file
+      file:
+        path: /tmp/playbookfile
+        state: touch
+        mode: '0755'
+      register: file_output
+
+    - name: create a directory
+      file:
+        path: /tmp/dir
+        mode: '0700'
+        state: directory
+
+    - name: Create group
+      group:
+        name: security
+        state: present
+
+    - name: create user Hugues
+      user:
+        comment: hugues Admin
+        shell: /bin/bash
+        group: security
+        name: Hugues
+      when: ansible_os_family == "Debian" or ansible_processor_nproc > 2
+    - name: Check uptime
+      command: uptime
+    - name: Check the date
+      shell: date
